@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Food Recommendation</title>
+</head>
+<body>
+    <h1>음식 추천 프로그램</h1>
+    <form id="preferenceForm">
+        <label>매운 음식은 좋아합니까?</label>
+        <select name="isSpicy">
+            <option value="true">좋아한다</option>
+            <option value="false">싫어한다</option>
+        </select>
+        <br>
+
+        <label>채식주의자입니까?</label>
+        <select name="isVegetarian">
+            <option value="true">네</option>
+            <option value="false">아니요</option>
+        </select>
+        <br>
+
+        <label>고단백 음식을 선호합니까?</label>
+        <select name="highProtein">
+            <option value="true">네</option>
+            <option value="false">아니요</option>
+        </select>
+        <br>
+
+        <label>저탄수화물 음식을 선호합니까?</label>
+        <select name="lowCarb">
+            <option value="true">네</option>
+            <option value="false">아니요</option>
+        </select>
+        <br>
+
+        <label>최대 칼로리:</label>
+        <input type="number" name="maxCalories" value="400">
+        <br>
+
+        <label>선호하는 요리 스타일:</label>
+        <select name="cuisineType">
+            <option value="Korean">한식</option>
+            <option value="Chinese">중식</option>
+            <option value="Japanese">일식</option>
+            <option value="Western">양식</option>
+            <option value="Any">상관없음</option>
+        </select>
+        <br>
+
+        <button type="submit">추천받기</button>
+    </form>
+
+    <div id="recommendations"></div>
+
+    <script>
+        document.getElementById('preferenceForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+
+            fetch('/recommendations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(recommendations => {
+                const recommendationsDiv = document.getElementById('recommendations');
+                recommendationsDiv.innerHTML = '';
+                recommendations.forEach(food => {
+                    recommendationsDiv.innerHTML += `<p>${food.name} - ${food.calories} kcal</p>`;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
